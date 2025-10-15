@@ -7,7 +7,7 @@ function Create() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(title, year, poster);
+    console.log(title, year, poster); //log title, year, and poster into console after submission
   }
 
   return ( //form that saves on submit
