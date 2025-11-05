@@ -1,14 +1,26 @@
 import { useState } from "react";
+import axios from "axios"; //import axios library
 
 function Create() {
   const [title, setTitle] = useState(''); //updates title anywhere in the code
   const [ year, setYear] = useState('');
   const [ poster, setPoster] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(title, year, poster); //log title, year, and poster into console after submission
-  }
+const handleSubmit = (e) => { // handle request once form is submitted
+  e.preventDefault(); //refrain from refreshing the page
+  
+  console.log(`Title: ${title}, Year: ${year}, Poster: ${poster}`); //logs entered form data to console
+  
+  const movie = { // saves data in movie constant
+    title: title,
+    year: year,
+    poster: poster
+  };
+  
+  axios.post('http://localhost:3000/api/movies', movie) // posts movie const to server side
+    .then((res) => console.log(res.data)) //logs form response in local console
+    .catch((err) => console.log(err.data)); // logs error if occurs
+};
 
   return ( //form that saves on submit
     <div>
