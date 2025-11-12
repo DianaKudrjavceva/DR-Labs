@@ -15,44 +15,73 @@ app.use(function (req, res, next) { // allows access from server to client
 
 import bodyParser from 'body-parser'; // body parser library imported
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 
 
-app.get('/api/movies', (req, res) => {
-    const myMovies = [ // const array named myMovies holding movie data
+import mongoose from 'mongoose'; //import mongoose library 
+mongoose.connect('mongodb+srv://admin:admin@datarepcluster.vhxqfjf.mongodb.net/?appName=DataRepCluster'); //connect cluster to server
 
-        {
-            "Title": "Avengers: Infinity War (server)",
-            "Year": "2018",
-            "imdbID": "tt4154756",
-            "Type": "movie",
-            "Poster": "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
-        },
-        {
-            "Title": "Captain America: Civil War (server)",
-            "Year": "2016",
-            "imdbID": "tt3498820",
-            "Type": "movie",
-            "Poster": "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg"
-        },
-        {
-            "Title": "World War Z (server)",
-            "Year": "2013",
-            "imdbID": "tt0816711",
-            "Type": "movie",
-            "Poster": "https://m.media-amazon.com/images/M/MV5BNDQ4YzFmNzktMmM5ZC00MDZjLTk1OTktNDE2ODE4YjM2MjJjXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg"
-        }
+const movieSchema = new mongoose.Schema({ //creates a schema
+    title: String, //stores same values as before
+    year: String,
+    poster: String
+});
 
-    ]
-    res.json({ myArray: myMovies }); // response is presented in JSON format
+
+const movieModel = mongoose.model('Movie', movieSchema); //generates model to use later, holds Movie model and its schema
+
+// app.get('/api/movies', (req, res) => {
+//     const myMovies = [ // const array named myMovies holding movie data
+
+//         {
+//             "Title": "Avengers: Infinity War (server)",
+//             "Year": "2018",
+//             "imdbID": "tt4154756",
+//             "Type": "movie",
+//             "Poster": "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
+//         },
+//         {
+//             "Title": "Captain America: Civil War (server)",
+//             "Year": "2016",
+//             "imdbID": "tt3498820",
+//             "Type": "movie",
+//             "Poster": "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg"
+//         },
+//         {
+//             "Title": "World War Z (server)",
+//             "Year": "2013",
+//             "imdbID": "tt0816711",
+//             "Type": "movie",
+//             "Poster": "https://m.media-amazon.com/images/M/MV5BNDQ4YzFmNzktMmM5ZC00MDZjLTk1OTktNDE2ODE4YjM2MjJjXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg"
+//         }
+
+//     ]
+//     res.json({ myArray: myMovies }); // response is presented in JSON format
+// })
+
+
+app.post('/api/movies', async (req, res) => { //run method asyncronously
+
+    const { title, year, poster } = req.body; //says values are in body
+
+    const newMovie = new movieModel({ title, year, poster }); //new object created
+    await newMovie.save(); //don't pass next method until finished
+
+    res.status(201).json({ message: 'Movie created successfully', movie: newMovie }); //when status successful, log message and object entry
+    console.log(newMovie); //log every new entry in server console
 })
 
 
+app.get('/api/movies', async (req, res) => { //gets data from url
+  const movies = await movieModel.find({}); //reads every record in model, waits until everything is found
+  res.json({myArray: movies}); //returns back the database model 
+});
 
-app.post('/api/movies', (req, res) => { //posts data from form to server console
-    console.log(req.body); //logs movie data from form
-    res.send('POST request to the main endpoint');
-})
+app.get('/api/movies/:id', async (req, res) => { //get url with specific movie id
+  const movie = await movieModel.findById(req.params.id); //wait until found
+  res.send(movie); //display 
+});
+
 app.listen(port, () => { //identifies port and listens on it
     console.log(`Server is running on http://localhost:${port}`);
 });
