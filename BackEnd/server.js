@@ -82,6 +82,17 @@ app.get('/api/movies/:id', async (req, res) => { //get url with specific movie i
   res.send(movie); //display 
 });
 
+app.get('/api/movies/:id', async (req, res) => { //get url of movie id to edit
+    let movie = await movieModel.findById({ _id: req.params.id }); //find the associated id
+    res.send(movie); //send it forward
+});
+
+app.put('/api/movies/:id', async (req, res) => { //edit at this id at this url
+    let movie = await movieModel.findByIdAndUpdate(req.params.id, req.body, { new: true }); //wait for updated information
+    res.send(movie); //send back new updated information
+});
+
+
 app.listen(port, () => { //identifies port and listens on it
     console.log(`Server is running on http://localhost:${port}`);
 });
