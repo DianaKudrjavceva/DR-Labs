@@ -92,6 +92,13 @@ app.put('/api/movies/:id', async (req, res) => { //edit at this id at this url
     res.send(movie); //send back new updated information
 });
 
+app.delete('/api/movies/:id', async (req, res) => { //delete whatever entry is at this url with this movie id
+  
+    console.log('Deleting movie with ID:', req.params.id); //log deletion in console
+    const movie = await movieModel.findByIdAndDelete(req.params.id); // wait for deletion to be complete
+    res.status(200).send({ message: "Movie deleted successfully", movie }); //respond with success status
+        
+});
 
 app.listen(port, () => { //identifies port and listens on it
     console.log(`Server is running on http://localhost:${port}`);
