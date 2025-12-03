@@ -14,13 +14,13 @@ const __dirname = path.dirname(__filename); //finds directory name
 app.use(express.static(path.join(__dirname, '../dist'))) //go out of this folder and naviagte to dist folder
 
 
-
-app.use(function (req, res, next) { // allows access from server to client
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+//can be taken out after build because we're only building 1 domain now
+// app.use(function (req, res, next) { // allows access from server to client
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
+// });
 
 
 import bodyParser from 'body-parser'; // body parser library imported
