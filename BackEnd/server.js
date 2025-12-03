@@ -5,6 +5,16 @@ const port = 3000;
 import cors from 'cors'; // cant access server through client without this extension
 app.use(cors());
 
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url); //finds file name
+const __dirname = path.dirname(__filename); //finds directory name 
+// Serve static files from Vite build
+app.use(express.static(path.join(__dirname, '../dist'))) //go out of this folder and naviagte to dist folder
+
+
+
 app.use(function (req, res, next) { // allows access from server to client
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -100,6 +110,14 @@ app.delete('/api/movies/:id', async (req, res) => { //delete whatever entry is a
         
 });
 
+//after creating a build
+app.get('/{*any}', (req, res) => { //for any URL thats not specified send them this file
+  res.sendFile(path.join(__dirname, '../dist/index.html')) // path to the file
+})
+
+
+
+//listen on port 3000
 app.listen(port, () => { //identifies port and listens on it
     console.log(`Server is running on http://localhost:${port}`);
 });
